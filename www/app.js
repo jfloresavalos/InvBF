@@ -151,7 +151,9 @@ const app = {
             }
         } catch (e) {
             // Server unreachable — try cached data
-            this.tryOfflineMode();
+            console.error('Connection error:', e);
+            $('loginMsg').textContent = `Error: ${e.message || 'Sin conexión'}`;
+            setTimeout(() => this.tryOfflineMode(), 2000);
         }
     },
 
