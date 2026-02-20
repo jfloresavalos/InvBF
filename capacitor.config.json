@@ -3,7 +3,12 @@
   "appName": "Inventario Pro",
   "webDir": "www",
   "server": {
-    "androidScheme": "http"
+    "androidScheme": "https",
+    "hostname": "inv.brunoferrini.pe",
+    "allowNavigation": [
+      "https://inv.brunoferrini.pe",
+      "http://inv.brunoferrini.pe"
+    ]
   },
   "plugins": {}
 }
