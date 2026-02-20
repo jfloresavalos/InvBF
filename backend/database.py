@@ -19,6 +19,7 @@ params_ferrini = urllib.parse.quote_plus(
     f"SERVER={SERVER};DATABASE=DBFERRINI;"
     f"UID={USERNAME};PWD={PASSWORD};"
     "TrustServerCertificate=yes;"
+    "Encrypt=no;"  # Fix SSL protocol error on older ODBC drivers
 )
 engine_ferrini = create_engine(
     f"mssql+pyodbc:///?odbc_connect={params_ferrini}",
@@ -35,6 +36,7 @@ params_retail = urllib.parse.quote_plus(
     f"SERVER={SERVER};DATABASE=RetailDataSHOE;"
     f"UID={USERNAME};PWD={PASSWORD};"
     "TrustServerCertificate=yes;"
+    "Encrypt=no;"  # Fix SSL protocol error on older ODBC drivers
 )
 engine_retail = create_engine(
     f"mssql+pyodbc:///?odbc_connect={params_retail}",
