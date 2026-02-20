@@ -2,6 +2,10 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import urllib.parse
 import os
+from dotenv import load_dotenv
+
+# Load .env file if exists (for local development)
+load_dotenv()
 
 # VPS Configuration (use environment variables for security)
 # For local dev: keep defaults | For production: set via .env or system env

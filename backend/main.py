@@ -21,10 +21,18 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://190.187.176.69:8001",
-        "https://190.187.176.69:8001",
+        # Production domain
+        "https://inv.brunoferrini.pe",
+        "http://inv.brunoferrini.pe",
+        # VPS IPs
+        "http://190.119.16.211",
+        "http://190.119.16.211:8001",
+        # Mobile app
         "capacitor://localhost",
-        "http://localhost:8001",  # for local dev
+        # Local development
+        "http://localhost:8001",
+        "http://127.0.0.1:8001",
+        "http://192.168.1.80:8001",
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],

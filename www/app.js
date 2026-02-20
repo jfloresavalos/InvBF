@@ -19,7 +19,7 @@ const CONFIG = {
     LECTURAS_KEY: 'inv_lecturas',
     UBICACION_KEY: 'inv_ubicacion',
     INV_KEY: 'inv_activo',
-    DEFAULT_SERVER: 'http://190.187.176.69:8001',
+    DEFAULT_SERVER: 'https://inv.brunoferrini.pe',
     FETCH_TIMEOUT: 120000,  // 2 minutes for large downloads
     MODO_BARRIDO_KEY: 'inv_modo_barrido',
     LOG_KEY: 'inv_log',
