@@ -19,14 +19,13 @@ params_ferrini = urllib.parse.quote_plus(
     f"SERVER={SERVER};DATABASE=DBFERRINI;"
     f"UID={USERNAME};PWD={PASSWORD};"
     "TrustServerCertificate=yes;"
-    "Encrypt=optional;"  # Allow both encrypted and non-encrypted connections
 )
 engine_ferrini = create_engine(
     f"mssql+pyodbc:///?odbc_connect={params_ferrini}",
     pool_size=3,        # max 3 persistent connections (enough for concurrent PDA syncs)
     max_overflow=5,     # up to 5 extra temporary connections under load
     pool_recycle=1800,  # recycle connections every 30min (avoids stale/dropped connections)
-    pool_pre_ping=True, # test connection health before using (no silent failures)
+    pool_pre_ping=False, # Disabled: reduces SSL handshake errors on legacy servers
 )
 SessionFerrini = sessionmaker(autocommit=False, autoflush=False, bind=engine_ferrini)
 
@@ -36,14 +35,13 @@ params_retail = urllib.parse.quote_plus(
     f"SERVER={SERVER};DATABASE=RetailDataSHOE;"
     f"UID={USERNAME};PWD={PASSWORD};"
     "TrustServerCertificate=yes;"
-    "Encrypt=optional;"  # Allow both encrypted and non-encrypted connections
 )
 engine_retail = create_engine(
     f"mssql+pyodbc:///?odbc_connect={params_retail}",
     pool_size=2,        # maestra is cached in memory — very few queries hit this DB
     max_overflow=3,
     pool_recycle=1800,
-    pool_pre_ping=True,
+    pool_pre_ping=False, # Disabled: reduces SSL handshake errors on legacy servers
 )
 SessionRetail = sessionmaker(autocommit=False, autoflush=False, bind=engine_retail)
 

@@ -61,7 +61,8 @@ def log_admin(tipo: str, mensaje: str, usuario: str = "sistema"):
 
 @app.on_event("startup")
 def startup():
-    init_tables()
+    # init_tables()  # Disabled: lazy load on first request (avoids SSL errors on startup)
+    pass
 
 # Serve PDA web app — accessible from any browser via VPS
 # http://190.187.176.69:8001/app  (same as APK but in browser, no Honeywell scanner)
