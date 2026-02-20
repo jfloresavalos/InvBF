@@ -1,0 +1,17 @@
+{
+    "name": "inventory-poc",
+    "version": "1.0.0",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "devDependencies": {
+        "vite": "^5.0.0"
+    },
+    "dependencies": {
+        "@capacitor/android": "^8.0.2",
+        "@capacitor/cli": "^8.0.2",
+        "@capacitor/core": "^8.0.2"
+    }
+}

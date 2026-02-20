@@ -1,0 +1,9 @@
+{
+  "appId": "com.inventario.lectora",
+  "appName": "Inventario Pro",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "http"
+  },
+  "plugins": {}
+}

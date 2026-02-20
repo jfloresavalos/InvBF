@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -ExecutionPolicy Bypass -File - <<'EOF'\n$env:JAVA_HOME = \"C:\\\\Program Files\\\\Android\\\\Android Studio\\\\jbr\"\nSet-Location \"c:\\\\Dev\\\\Lectora\\\\android\"\n& .\\\\gradlew.bat assembleDebug\nEOF)"
+    ]
+  }
+}

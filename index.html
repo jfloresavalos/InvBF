@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Inventario Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Librerías Externas -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- VISTA 1: LOGIN -->
+    <section id="view-login" class="view-container active">
+        <div class="login-card glass-panel">
+            <div class="brand-logo">📦</div>
+            <h1>Inventario Pro</h1>
+            <p class="subtitle">Seleccione su perfil</p>
+
+            <div class="role-selector">
+                <button class="btn-role" onclick="app.login('scanner')">
+                    <span class="icon">📱</span>
+                    <span class="text">Operario / Escáner</span>
+                </button>
+                <button class="btn-role secondary" onclick="app.login('admin')">
+                    <span class="icon">💻</span>
+                    <span class="text">Administrador</span>
+                </button>
+            </div>
+            <p class="version">v1.0.0 POC</p>
+        </div>
+    </section>
+
+    <!-- VISTA 2: ADMIN DASHBOARD -->
+    <section id="view-admin" class="view-container hidden">
+        <header class="glass-header">
+            <div class="logo">📦 Admin</div>
+            <button class="btn-icon" onclick="app.logout()">🚪</button>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Tarjeta Carga de Datos -->
+            <div class="card glass-panel">
+                <h3>📂 Carga Masiva (Excel)</h3>
+                <div class="drop-zone" id="dropZone">
+                    <p>Arrastre archivos aquí o clic</p>
+                    <div class="file-actions">
+                        <label for="fileMaster" class="btn-upload">Cargar Maestra</label>
+                        <input type="file" id="fileMaster" accept=".xlsx, .xls" hidden>
+
+                        <label for="fileStock" class="btn-upload">Cargar Stock</label>
+                        <input type="file" id="fileStock" accept=".xlsx, .xls" hidden>
+                    </div>
+                </div>
+                <div id="adminStatus" class="status-text">Sistema listo.</div>
+            </div>
+
+            <!-- Tarjeta Monitor -->
+            <div class="card glass-panel full-width">
+                <div class="card-header">
+                    <h3>📊 Monitor en Vivo</h3>
+                    <button class="btn-small" onclick="app.clearData()">Limpiar Todo</button>
+                </div>
+                <div class="table-container">
+                    <table id="adminTable">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>Cant.</th>
+                                <th>Dispositivo</th>
+                                <th>Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- VISTA 3: SCANNER (MÓVIL) -->
+    <section id="view-scanner" class="view-container hidden">
+        <header class="glass-header mobile-header">
+            <div class="device-info">
+                <span class="indicator-dot online"></span>
+                <span id="mobileDeviceName">Lectora #1</span>
+            </div>
+            <div class="actions">
+                <button class="btn-icon" id="btnSyncMobile">🔄 <span id="batchCountBadge"
+                        class="badge hidden">0</span></button>
+                <button class="btn-icon" onclick="app.logout()">🚪</button>
+            </div>
+        </header>
+
+        <main class="scanner-main">
+            <!-- Visor de Cámara -->
+            <div id="camera-wrapper" class="camera-wrapper hidden">
+                <div id="reader"></div>
+                <button class="btn-close-camera" onclick="app.toggleCamera()">✖</button>
+            </div>
+
+            <!-- Botonera Principal -->
+            <div class="big-actions">
+                <button class="btn-hero primary" onclick="app.toggleCamera()">
+                    📷 Activar Cámara
+                </button>
+                <div class="manual-input-wrapper">
+                    <input type="text" id="scannerInput" placeholder="Escáner / Teclado aquí..." autocomplete="off">
+                    <span class="input-icon">⌨️</span>
+                </div>
+            </div>
+
+            <!-- Último Escaneo (Feedback Inmediato) -->
+            <div id="lastScanCard" class="last-scan-card glass-panel hidden">
+                <div class="scan-status success">✓</div>
+                <h2 id="lastScanName">Coca Cola 600ml</h2>
+                <p id="lastScanCode">7750123001</p>
+            </div>
+
+            <!-- Lista Reciente -->
+            <div class="recent-list">
+                <h4>Historial Reciente</h4>
+                <ul id="mobileList"></ul>
+            </div>
+        </main>
+    </section>
+
+    <!-- Modal Nuevo Producto -->
+    <div id="modalNew" class="modal-overlay hidden">
+        <div class="modal-card glass-panel">
+            <h3>⚠️ Producto Desconocido</h3>
+            <p>El código <b id="newCodeDisplay"></b> no existe.</p>
+            <input type="text" id="newNameInput" placeholder="Ingrese nombre del producto">
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="app.closeModal()">Cancelar</button>
+                <button class="btn-primary" onclick="app.saveNewProduct()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Toast -->
+    <div id="toast" class="toast hidden">Mensaje</div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

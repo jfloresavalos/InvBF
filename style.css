@@ -1,0 +1,386 @@
+/* --- VARIABLES & THEME (Dark Mode Premium) --- */
+:root {
+    --bg-dark: #0f172a;
+    /* Slate 900 */
+    --surface-dark: #1e293b;
+    /* Slate 800 */
+    --surface-glass: rgba(30, 41, 59, 0.7);
+
+    --primary: #3b82f6;
+    /* Blue 500 */
+    --primary-glow: rgba(59, 130, 246, 0.3);
+
+    --success: #10b981;
+    /* Emerald 500 */
+    --warning: #f59e0b;
+    /* Amber 500 */
+    --danger: #ef4444;
+    /* Red 500 */
+
+    --text-main: #f8fafc;
+    /* Slate 50 */
+    --text-muted: #94a3b8;
+    /* Slate 400 */
+
+    --border-color: rgba(255, 255, 255, 0.1);
+    --radius-lg: 16px;
+    --radius-md: 8px;
+
+    --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-inter);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-x: hidden;
+    /* Background Gradient Mesh */
+    background-image:
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.3) 0, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.2) 0, transparent 50%);
+    background-attachmen: fixed;
+}
+
+/* --- UTILITIES --- */
+.hidden {
+    display: none !important;
+}
+
+.view-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+}
+
+.view-container.active {
+    opacity: 1;
+    pointer-events: all;
+    position: relative;
+}
+
+/* --- GLASSMORPHISM PANEL --- */
+.glass-panel {
+    background: var(--surface-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-lg);
+}
+
+/* --- VISTA 1: LOGIN --- */
+#view-login {
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card {
+    padding: 40px;
+    text-align: center;
+    width: 90%;
+    max-width: 350px;
+}
+
+.brand-logo {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    margin-bottom: 30px;
+}
+
+.role-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-role {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-role:active {
+    transform: scale(0.98);
+}
+
+.btn-role.secondary {
+    background: var(--surface-dark);
+    border: 1px solid var(--border-color);
+}
+
+.btn-role .icon {
+    font-size: 1.5rem;
+}
+
+/* --- VISTA 2: ADMIN DASHBOARD --- */
+.glass-header {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media(min-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+
+.card {
+    padding: 20px;
+    color: var(--text-main);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.drop-zone {
+    border: 2px dashed var(--text-muted);
+    border-radius: var(--radius-md);
+    padding: 30px;
+    text-align: center;
+    margin: 20px 0;
+    transition: border-color 0.3s;
+}
+
+.drop-zone:hover {
+    border-color: var(--primary);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.btn-upload {
+    background: var(--surface-dark);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+/* Table Styles (Best Practices for lists: readable rows) */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th {
+    text-align: left;
+    color: var(--text-muted);
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 500;
+}
+
+td {
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- VISTA 3: SCANNER MOBILE --- */
+.scanner-main {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+}
+
+.big-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-hero {
+    width: 100%;
+    padding: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: var(--radius-lg);
+    border: none;
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 20px var(--primary-glow);
+    cursor: pointer;
+    min-height: 60px;
+    /* Touch target > 44px */
+}
+
+.manual-input-wrapper {
+    position: relative;
+}
+
+#scannerInput {
+    width: 100%;
+    background: var(--surface-dark);
+    border: 1px solid var(--border-color);
+    padding: 15px 15px 15px 45px;
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 1.1rem;
+    box-sizing: border-box;
+}
+
+#scannerInput:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+}
+
+/* Last Scan Feedback */
+.last-scan-card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-left: 5px solid var(--success);
+    animation: slideIn 0.3s ease;
+}
+
+.scan-status {
+    width: 40px;
+    height: 40px;
+    background: var(--success);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* --- MODAL & TOAST --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-card {
+    width: 90%;
+    max-width: 400px;
+    padding: 25px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    padding: 10px 20px;
+    border-radius: 6px;
+}
+
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface-dark);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+}

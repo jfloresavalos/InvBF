@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Inventario Pro - PDA</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+</head>
+<body>
+
+    <!-- LOGIN -->
+    <section id="view-login" class="view active">
+        <div class="login-card glass-card">
+            <div class="brand-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                    <path d="m3.3 7 8.7 5 8.7-5"/>
+                    <path d="M12 22V12"/>
+                </svg>
+            </div>
+            <h1>Inventario Pro</h1>
+            <p class="subtitle">PDA Scanner</p>
+
+            <div class="form-group">
+                <label for="inputServer">Servidor</label>
+                <div class="input-wrapper">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="20" height="8" x="2" y="2" rx="2" ry="2"/>
+                        <rect width="20" height="8" x="2" y="14" rx="2" ry="2"/>
+                        <line x1="6" x2="6.01" y1="6" y2="6"/>
+                        <line x1="6" x2="6.01" y1="18" y2="18"/>
+                    </svg>
+                    <input type="text" id="inputServer" placeholder="http://190.187.176.69:8001">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputDevice">Nombre del Dispositivo</label>
+                <div class="input-wrapper">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
+                        <path d="M12 18h.01"/>
+                    </svg>
+                    <input type="text" id="inputDevice" placeholder="Lectora 1">
+                </div>
+                <div id="deviceLockHint" style="display:none;align-items:center;gap:5px;margin-top:5px;font-size:.72rem;color:rgba(255,255,255,.45);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;flex-shrink:0">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    Nombre bloqueado tras primer sync. Contacta al admin para cambiar.
+                </div>
+            </div>
+
+            <button class="btn-primary btn-lg" onclick="app.enterScanner()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                    <polyline points="10 17 15 12 10 7"/>
+                    <line x1="15" x2="3" y1="12" y2="12"/>
+                </svg>
+                ENTRAR
+            </button>
+
+            <button id="btnOffline" class="btn-secondary btn-lg hidden" onclick="app.tryOfflineMode()" style="margin-top:8px;background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);color:#fbbf24">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px">
+                    <path d="M1 6s4-4 11-4a19.5 19.5 0 0 1 11 4"/>
+                    <path d="M1.5 10S5 7 12 7s10.5 3 10.5 3"/>
+                    <line x1="2" x2="22" y1="2" y2="22"/>
+                </svg>
+                Continuar sin conexion
+            </button>
+
+            <p id="loginMsg" class="login-msg"></p>
+        </div>
+    </section>
+
+    <!-- NO INVENTORY -->
+    <section id="view-noinv" class="view hidden">
+        <div class="center-card glass-card">
+            <div class="center-icon warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/>
+                    <path d="M6 9.01V9"/>
+                    <path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/>
+                </svg>
+            </div>
+            <h2>Sin inventario activo</h2>
+            <p>Espere a que el administrador inicie un inventario.</p>
+            <div class="btn-group">
+                <button class="btn-primary" onclick="app.checkInventario()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                        <path d="M21 3v5h-5"/>
+                    </svg>
+                    Reintentar
+                </button>
+                <button class="btn-outline" onclick="app.logout()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" x2="9" y1="12" y2="12"/>
+                    </svg>
+                    Salir
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- DOWNLOADING -->
+    <section id="view-download" class="view hidden">
+        <div class="center-card glass-card">
+            <div class="center-icon loading">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" x2="12" y1="15" y2="3"/>
+                </svg>
+            </div>
+            <h2>Descargando maestra...</h2>
+            <p id="downloadMsg">Conectando al servidor</p>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCANNER -->
+    <section id="view-scanner" class="view hidden">
+        <header class="scanner-header">
+            <div class="header-left">
+                <div class="status-indicator" id="dotStatus">
+                    <span class="dot"></span>
+                </div>
+                <span class="device-name" id="headerDevice">Lectora 1</span>
+            </div>
+            <div class="header-center">
+                <span class="store-badge" id="headerInv">Tienda X</span>
+            </div>
+            <div class="header-right">
+                <div class="count-badge" id="badgeCount">0</div>
+                <button class="btn-icon btn-icon-neutral" onclick="app.showManual()" title="Agregar Manual" id="btnManual">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 11V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h7"/>
+                        <path d="m17 17 5 5"/>
+                        <path d="M21 17a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"/>
+                    </svg>
+                </button>
+                <button class="btn-icon btn-icon-neutral" onclick="app.showLog()" title="Ver Log" id="btnLog">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" x2="8" y1="13" y2="13"/>
+                        <line x1="16" x2="8" y1="17" y2="17"/>
+                    </svg>
+                </button>
+                <button class="btn-icon btn-icon-neutral" onclick="app.showMonitor()" title="Ver Inventario">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3v18h18"/>
+                        <path d="m19 9-5 5-4-4-3 3"/>
+                    </svg>
+                </button>
+                <button class="btn-icon btn-icon-neutral" onclick="app.showProductos()" title="Ver Productos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                        <path d="m3.3 7 8.7 5 8.7-5"/>
+                        <path d="M12 22V12"/>
+                    </svg>
+                </button>
+                <button class="btn-icon" onclick="app.logout()" title="Salir">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" x2="9" y1="12" y2="12"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="scanner-body">
+            <div class="scanner-left">
+            <!-- Ubicacion Card -->
+            <div class="input-card">
+                <div class="input-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>Ubicacion</span>
+                </div>
+                <input type="text" id="inputUbicacion" placeholder="Ej: A1, B2, PISO1"
+                       oninput="app.saveUbicacion()" class="input-field input-lg">
+            </div>
+
+            <!-- Modo Barrido Toggle -->
+            <div class="input-card barrido-card" id="barridoCard">
+                <div class="barrido-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="chkBarrido" onchange="app.toggleBarrido()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div class="barrido-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                            <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                            <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                            <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                            <line x1="7" x2="17" y1="12" y2="12"/>
+                        </svg>
+                        <div>
+                            <span class="barrido-title">Modo Barrido</span>
+                            <span class="barrido-desc">Cantidad automatica = 1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Producto Card -->
+            <div class="input-card producto-card">
+                <div class="input-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                        <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                        <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                        <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                        <rect width="10" height="8" x="7" y="8" rx="1"/>
+                    </svg>
+                    <span>Producto</span>
+                </div>
+                <input type="text" id="inputProducto" placeholder="Escanear o escribir codigo..."
+                       autocomplete="off" inputmode="none" class="input-field input-lg">
+
+                <div id="productInfo" class="product-info hidden">
+                    <div class="product-status success">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M20 6 9 17l-5-5"/>
+                        </svg>
+                    </div>
+                    <div class="product-details">
+                        <span id="productDesc" class="product-desc"></span>
+                        <span id="productSKU" class="product-sku"></span>
+                    </div>
+                </div>
+
+                <div id="productNotFound" class="product-notfound hidden">
+                    <div class="product-status error">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="m15 9-6 6"/>
+                            <path d="m9 9 6 6"/>
+                        </svg>
+                    </div>
+                    <div class="product-details">
+                        <span class="product-desc">Producto no encontrado</span>
+                        <span class="product-sku">No existe en la maestra de productos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cantidad + Enviar Row -->
+            <div class="action-row">
+                <div class="qty-card" id="qtyCard">
+                    <div class="input-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M8 12h8"/>
+                            <path d="M12 8v8"/>
+                        </svg>
+                        <span>Cantidad</span>
+                    </div>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="app.decrementQty()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path d="M5 12h14"/>
+                            </svg>
+                        </button>
+                        <input type="number" id="inputCantidad" value="1" min="1" class="qty-input">
+                        <button class="qty-btn" onclick="app.incrementQty()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path d="M5 12h14"/>
+                                <path d="M12 5v14"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <button class="btn-enviar" onclick="app.registrar()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="m5 12 7 7 7-7"/>
+                        <path d="M12 19V5"/>
+                    </svg>
+                    <span>ENVIAR</span>
+                </button>
+            </div>
+
+            </div><!-- /scanner-left -->
+            <div class="scanner-right">
+            <!-- Lecturas Section -->
+            <div class="lecturas-section">
+                <div class="lecturas-header">
+                    <div class="lecturas-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                            <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+                            <path d="M9 14h.01"/>
+                            <path d="M13 14h2"/>
+                            <path d="M9 18h.01"/>
+                            <path d="M13 18h2"/>
+                        </svg>
+                        <h3>Lecturas</h3>
+                        <span class="lecturas-count" id="lecturasCount">0</span>
+                    </div>
+                </div>
+                <div id="lecturasList" class="lecturas-list"></div>
+                <div id="lecturasEmpty" class="lecturas-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                        <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                        <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                        <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                    </svg>
+                    <p>Escanea productos para comenzar</p>
+                </div>
+            </div>
+
+            <!-- Subir Conteo -->
+            <div class="sync-section" style="margin-top:auto">
+                <div class="sync-status" id="syncStatus">
+                    <span class="sync-pending" id="syncPending">0 lecturas pendientes</span>
+                    <span class="sync-last" id="syncLast">Sin sincronizar</span>
+                </div>
+                <button class="btn-subir" onclick="app.sync()" id="btnSync">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" x2="12" y1="3" y2="15"/>
+                    </svg>
+                    <span>SUBIR CONTEO</span>
+                </button>
+            </div>
+            </div><!-- /scanner-right -->
+        </main>
+    </section>
+
+    <!-- LOG DE ACTIVIDAD -->
+    <section id="view-log" class="view hidden">
+        <header class="scanner-header">
+            <div class="header-left">
+                <button class="btn-icon" onclick="app.hideLog()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                </button>
+                <h2 class="view-title">Log de Actividad</h2>
+            </div>
+            <div class="header-right"></div>
+        </header>
+        <main class="scanner-body">
+            <div class="log-info">
+                <span id="logDevice">Dispositivo: -</span>
+                <span id="logCount">0 entradas</span>
+            </div>
+            <div id="logList" class="log-list"></div>
+        </main>
+    </section>
+
+    <!-- MONITOR INVENTARIO EN VIVO -->
+    <section id="view-inventario" class="view hidden">
+        <header class="scanner-header">
+            <div class="header-left">
+                <button class="btn-icon btn-icon-neutral" onclick="app.hideMonitor()" title="Volver">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                </button>
+                <span class="device-name">Inventario en Vivo</span>
+            </div>
+            <div class="header-right">
+                <button class="btn-sync" onclick="app.loadProgreso()" id="btnRefreshMonitor">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                        <path d="M21 3v5h-5"/>
+                    </svg>
+                    <span>Actualizar</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="scanner-body">
+            <!-- Progress Bar -->
+            <div class="monitor-progress-card">
+                <div class="monitor-progress-header">
+                    <span class="monitor-progress-label">Progreso del Inventario</span>
+                    <span class="monitor-progress-pct" id="monitorPct">0%</span>
+                </div>
+                <div class="monitor-progress-bar">
+                    <div class="monitor-progress-fill" id="monitorProgressFill"></div>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="monitor-cards" id="monitorCards">
+                <div class="monitor-card">
+                    <span class="monitor-card-label">Stock Teorico</span>
+                    <span class="monitor-card-value" id="mcStock">0</span>
+                </div>
+                <div class="monitor-card">
+                    <span class="monitor-card-label">Conteo</span>
+                    <span class="monitor-card-value primary" id="mcConteo">0</span>
+                </div>
+                <div class="monitor-card">
+                    <span class="monitor-card-label">Diferencia</span>
+                    <span class="monitor-card-value" id="mcDiff">0</span>
+                </div>
+                <div class="monitor-card">
+                    <span class="monitor-card-label">Productos</span>
+                    <span class="monitor-card-value" id="mcProds">0/0</span>
+                </div>
+            </div>
+
+            <!-- Device Cards -->
+            <div id="deviceCards" class="device-cards"></div>
+
+            <!-- Filters -->
+            <div class="input-card">
+                <div class="monitor-filter-row">
+                    <input type="text" id="monitorFilterText" placeholder="Buscar SKU, ALU, descripcion..."
+                           oninput="app.filterInventario()" class="input-field">
+                    <select id="monitorFilterDepto" onchange="app.filterInventario()" class="input-field" style="flex:0 0 auto;width:auto;min-width:120px">
+                        <option value="">Todo Depto</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <div class="monitor-table-wrap">
+                <p id="monitorTableCount" style="font-size:.75rem;color:var(--md-on-surface-variant);margin-bottom:8px"></p>
+                <div class="monitor-table" id="monitorTable"></div>
+            </div>
+        </main>
+    </section>
+
+    <!-- PRODUCTOS EN CACHE -->
+    <section id="view-productos" class="view hidden">
+        <header class="scanner-header">
+            <div class="header-left">
+                <button class="btn-icon btn-icon-neutral" onclick="app.hideProductos()" title="Volver">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                </button>
+                <span class="device-name">Productos en Cache</span>
+            </div>
+        </header>
+
+        <main class="scanner-body">
+            <!-- Cache Info -->
+            <div class="monitor-cards" id="cacheInfoCards">
+                <div class="monitor-card">
+                    <span class="monitor-card-label">Total</span>
+                    <span class="monitor-card-value primary" id="cacheTotal">0</span>
+                </div>
+                <div class="monitor-card">
+                    <span class="monitor-card-label">Hash</span>
+                    <span class="monitor-card-value" id="cacheHash" style="font-size:.8rem">-</span>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="input-card">
+                <input type="text" id="cacheSearch" placeholder="Buscar producto por SKU, ALU, descripcion..."
+                       oninput="app.filterMaestraApp()" class="input-field">
+            </div>
+
+            <!-- Products List -->
+            <p id="cacheShowCount" style="font-size:.75rem;color:var(--md-on-surface-variant);margin-bottom:4px"></p>
+            <div id="cacheList" class="productos-list"></div>
+        </main>
+    </section>
+
+    <!-- AGREGAR MANUAL -->
+    <section id="view-manual" class="view hidden">
+        <header class="scanner-header">
+            <div class="header-left">
+                <button class="btn-icon" onclick="app.hideManual()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                </button>
+                <h2 class="view-title">Agregar Manual</h2>
+            </div>
+            <div class="header-right">
+                <span class="count-badge" id="manualBadge">0</span>
+            </div>
+        </header>
+        <main class="scanner-body">
+            <!-- Busqueda -->
+            <div class="input-card">
+                <div class="input-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.3-4.3"/>
+                    </svg>
+                    <span>Buscar producto</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                    <input type="text" id="manualSearch" placeholder="Descripcion, modelo, SKU, ALU..."
+                           class="input-field" style="flex:1"
+                           oninput="app.buscarManualLive(this.value)"
+                           onkeydown="if(event.key==='Enter'){event.preventDefault();app.buscarManual();}">
+                    <button onclick="app.buscarManual()" class="btn-icon btn-icon-neutral" style="flex:0;padding:10px 14px;border-radius:8px;background:var(--md-primary,#6750a4);color:white;border:none;font-size:.85rem;font-weight:600;white-space:nowrap;cursor:pointer" title="Buscar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="input-card" style="padding-top:8px;padding-bottom:8px">
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <select id="manualFilterProv" onchange="app.buscarManual()" class="input-field" style="flex:1;min-width:120px">
+                        <option value="">-- Proveedor --</option>
+                    </select>
+                    <select id="manualFilterTemp" onchange="app.buscarManual()" class="input-field" style="flex:1;min-width:120px">
+                        <option value="">-- Temporada --</option>
+                    </select>
+                    <button onclick="app.clearManualFilters()" class="btn-icon btn-icon-neutral" style="flex:0;padding:8px 12px;border-radius:8px;font-size:.8rem;border:1px solid rgba(255,255,255,.12)" title="Limpiar filtros">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+                            <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resultados busqueda -->
+            <div id="manualResults" class="search-results hidden" style="position:static;margin-top:0"></div>
+
+            <!-- Producto seleccionado -->
+            <div id="manualProductCard" class="input-card hidden">
+                <div id="manualProductInfo" class="product-info">
+                    <div class="product-status success">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M20 6 9 17l-5-5"/>
+                        </svg>
+                    </div>
+                    <div class="product-details">
+                        <span id="manualDesc" class="product-desc"></span>
+                        <span id="manualSKU" class="product-sku"></span>
+                    </div>
+                </div>
+                <div class="action-row" style="margin-top:12px">
+                    <div class="qty-card" style="flex:1">
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="app.manualDec()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/></svg>
+                            </button>
+                            <input type="number" id="manualCantidad" value="1" min="1" class="qty-input">
+                            <button class="qty-btn" onclick="app.manualInc()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn-enviar" onclick="app.registrarManual()" style="background:var(--md-tertiary,#7d5260)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 5v14"/><path d="m5 12 7 7 7-7"/>
+                        </svg>
+                        <span>AGREGAR</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lista de productos agregados manualmente -->
+            <div class="lecturas-section">
+                <div class="lecturas-header">
+                    <div class="lecturas-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        <h3>Agregados manualmente</h3>
+                        <span class="lecturas-count" id="manualCount">0</span>
+                    </div>
+                </div>
+                <div id="manualList" class="lecturas-list"></div>
+                <div id="manualEmpty" class="lecturas-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                    </svg>
+                    <p>Busca productos para agregar manualmente</p>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- Toast -->
+    <div id="toast" class="toast hidden">
+        <div class="toast-icon" id="toastIcon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M20 6 9 17l-5-5"/>
+            </svg>
+        </div>
+        <span id="toastMsg"></span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
