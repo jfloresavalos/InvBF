@@ -4,6 +4,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from typing import List, Any  # Compatibilidad Python 3.8
 from datetime import datetime
 from collections import deque
 from sqlalchemy.orm import Session
@@ -100,8 +101,8 @@ class LogEntry(BaseModel):
 
 class SyncRequest(BaseModel):
     dispositivo: str
-    lecturas: list[LecturaItem]
-    logs: list[LogEntry] = []  # PDA activity log entries (optional)
+    lecturas: List[LecturaItem]
+    logs: List[LogEntry] = []  # PDA activity log entries (optional)
 
 
 # --- Admin Panel ---
@@ -576,7 +577,7 @@ def eliminar_inventario(inv_id: int, db: Session = Depends(get_db)):
 
 
 @app.post("/api/inventario/{inv_id}/stock/eliminar-lote")
-def delete_stock_batch(inv_id: int, ids: list[int], db: Session = Depends(get_db)):
+def delete_stock_batch(inv_id: int, ids: List[int], db: Session = Depends(get_db)):
     if not ids:
         return {"success": True, "eliminados": 0}
     placeholders = ",".join(str(int(i)) for i in ids)
