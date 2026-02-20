@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow cleartext traffic for all domains (dev + prod) -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <!-- Trust system certificates (Let's Encrypt, etc.) -->
+            <certificates src="system" />
+            <!-- Trust user-added certificates -->
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Specific config for production domain -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">inv.brunoferrini.pe</domain>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </domain-config>
+</network-security-config>
